@@ -27,14 +27,15 @@ def axisCorrectionDisplay():
     display.pixel(4,1)
     display.pixel(4,3)
 
-def axis_correction(last_move, corner = 0, set_point_c = 40, set_point_s = 75):
+def axis_correction(last_move, set_point_c = 40, set_point_s = 75):
     axisCorrectionDisplay()
+    global corner
     name = ''
     move_side = ''
     log = ''
-    if last_move != "axis correction **Corner**" or last_move != "axis correction **Suave**":
+    if last_move != "axis correction **Corner**" and last_move != "axis correction **Suave**":
         corner = 0
-    if corner > 3:
+    if corner >= 3:
         motors.stop_tank()
         if sd.reflection() < set_point_s:
             while sd.reflection() < set_point_s:
