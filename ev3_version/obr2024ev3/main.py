@@ -9,7 +9,7 @@ from pybricks.media.ev3dev import SoundFile, ImageFile
 from modules.motorpair import MotorPair
 from modules.intersection import Intersection
 from modules.finishline import FinishLine
-
+from modules.robot import Robot
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
@@ -201,7 +201,42 @@ def desviarObs(lado = 'left'):
         motors.stop_tank()
         wait(1000)
         return [name, lado, 'succeded']
-    return [name, lado, 'failed']       
+    return [name, lado, 'failed']
+      
+def FindSafe(areas):
+    pos_areas = areas
+    if [PontoInicial[0],PontoInicial[1]] in pos_areas:
+        print("estou aqui")
+        pos_areas.pop(pos_areas.index([PontoInicial[0],PontoInicial[1]]))
+    if [out[0],out[1]] in pos_areas:
+        pos_areas.pop(pos_areas.index([out[0],out[1]]))
+    for area in pos_areas:
+        robot.pointToaPoint(area[0], area[1])
+        wait(500)
+        u_value = u2.distance()
+        if u_value > 50 and u_value < 350:
+            ev3.speaker.beep()
+            print('Safe on:' + str(area))
+            return area
+    return False
+
+def resgate():
+    robot.pointTo(PontoInicial[2])
+    robot.motors.move_tank(3000,250,250)
+    robot.back_goTo(45,35)
+    robot.back_goTo(Center[0],Center[1])
+    safe = FindSafe(AreaResgate)
+    if not safe:
+        robot.goTo(out[0], out[1])
+        robot.pointTo(out[2])
+    else:
+        robot.back_goTo(safe[0], safe[1])
+        robot.goTo(Center[0],Center[1])
+        robot.goTo(45,75)
+        robot.goTo(out[0], out[1])
+        robot.pointTo(out[2])
+        robot.motors.move_tank(1000,250,250)
+    print(robot.map.points)
 
 #creating a function to detect if the robot is in the rescue zone
 def checarResgate(u_value):
@@ -209,7 +244,7 @@ def checarResgate(u_value):
     if u_value > 700 and u_value < 930:
         motors.move_tank(500,-250,250)
         if u2.distance() < 1000:
-            motors.move_tank(500,250,-250)
+            motors.move_tank(700,250,-250)
             r = True
         else:
             motors.move_tank(1000,250,-250)
@@ -217,9 +252,12 @@ def checarResgate(u_value):
                 r = True
             motors.move_tank(500,-250,250)
         if r:
-            motors.stop_tank()   
+            motors.stop_tank()
+            ev3.speaker.beep(20)
+            resgate()    
             return True
     elif u_value < 100:
+        ev3.speaker.beep(100)
         motors.stop_tank()
         move_side = 'right'
         desviarObs()
@@ -251,10 +289,12 @@ corner = 0
 mode = "execution"
 
 #Saídas = [[385,0],[1155,0],[1925,0],[385,2310][1155,2310],[1925,2310],[0,385],[0,1155],[0,1925],[2310,385],[2310,1155],[2310,1925]]
-PontoInicial = [45,15,0]
+PontoInicial = [45,10,0]
 Center = [45,45]
-AreaResgate = [[15,15],[15,75],[75,15],[75,75]]
-out = [75,45,90]
+AreaResgate = [[20,20],[20,70],[70,20],[70,70]]
+out = [75,85,90]
+safe = None
+robot = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
 set_point_c = 20
 set_point_s = 25
 timeout_s = 1200
