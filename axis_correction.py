@@ -38,11 +38,11 @@ def axis_correction(last_move, corner = 0, set_point_c = 40, set_point_s = 75):
         motors.stop_tank()
         if sd.reflection() < set_point_s:
             while sd.reflection() < set_point_s:
-                motors.start_tank(-150,0)
+                motors.start_tank(-100,0)
                 move_side = 'right'
         if se.reflection() < set_point_s : 
             while se.reflection() < set_point_s:
-                motors.start_tank(0,-150)
+                motors.start_tank(0,-100)
                 move_side = 'left'
         if corner == 5:
             corner == 0
@@ -51,12 +51,12 @@ def axis_correction(last_move, corner = 0, set_point_c = 40, set_point_s = 75):
     else:
         if sd.reflection() > se.reflection():
             while sd.reflection() > set_point_c:
-                motors.start_tank(300,-50)
+                motors.start_tank(250,-40)
                 move_side = 'right'
             corner += 1
         else:
             while se.reflection() > set_point_c:
-                motors.start_tank(-50,300)
+                motors.start_tank(-40,250)
                 move_side = 'left'
             corner += 1
         name = "axis correction **Corner**"
