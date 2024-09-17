@@ -241,7 +241,7 @@ def resgate():
 #creating a function to detect if the robot is in the rescue zone
 def checarResgate(u_value):
     r = False
-    if u_value > 700 and u_value < 930:
+    if u_value > 550 and u_value < 750:
         motors.move_tank(500,-250,250)
         if u2.distance() < 1000:
             motors.move_tank(700,250,-250)
@@ -270,7 +270,7 @@ darkest = ""
 motors = MotorPair(Port.D,Port.A)
 
 # defining sensors
-green_values = [[[2, 21, 15], [14, 45, 23]], [[2, 21, 15], [14, 45, 23]]]
+green_values = [[[0, 24.1, 17.4], [8.7, 34.1, 27.4]], [[0, 27.5, 18.3], [8.8, 37.5, 28.3]]]
 u2 = UltrasonicSensor(Port.S4)
 sc = ColorSensor(Port.S3)
 sd = ColorSensor(Port.S2)
