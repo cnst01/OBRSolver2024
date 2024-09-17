@@ -1,3 +1,13 @@
+from pybricks.hubs import EV3Brick
+from pybricks.ev3devices import (Motor, TouchSensor, ColorSensor,
+                                 InfraredSensor, UltrasonicSensor, GyroSensor)
+from pybricks.parameters import Port, Stop, Direction, Button, Color
+from pybricks.tools import wait, StopWatch, DataLog
+from pybricks.robotics import DriveBase
+from pybricks.media.ev3dev import SoundFile, ImageFile
+from modules.motorpair import MotorPair
+from modules.finishline import FinishLine
+from modules.robot import Robot
 #creating intersection object
 class Intersection:
     def __init__(self, se, sd, green_values):
@@ -68,19 +78,15 @@ class Intersection:
             sensor = self.sd
         for x in range(200):
             wait(10)
-            if side == "right":
-                calibrateRightDisplay(int((x+1)/2))
-            if side == "left":
-                calibrateLeftDisplay(int((x+1)/2))
-            hsv_obj = sensor.hsv()
-            hsv_med[0] += hsv_obj.h
-            hsv_med[1] += hsv_obj.s
-            hsv_med[2] += hsv_obj.v
+            hsv_obj = sensor.rgb()
+            hsv_med[0] += hsv_obj[0]
+            hsv_med[1] += hsv_obj[1]
+            hsv_med[2] += hsv_obj[2]
             print(hsv_med)
         for i in range(3):
             hsv_med[i] = hsv_med[i]/200
-            hsv_min[i] = hsv_med[i] - 20
-            hsv_max[i] = hsv_med[i] + 20  
+            hsv_min[i] = hsv_med[i] - 5
+            hsv_max[i] = hsv_med[i] + 5  
             # if hsv_obj.h < hsv_min[0] or hsv_min[0] == 0 :
             #     hsv_min[0] = hsv_obj.h
             # if hsv_obj.s < hsv_min[1] or hsv_min[1] == 0 :
