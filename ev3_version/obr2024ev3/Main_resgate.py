@@ -45,7 +45,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         if sd.reflection() < set_point_s:
             timer.reset()
             while sd.reflection() < set_point_s:
-                motors.start_tank(-150,-50)
+                motors.start_tank(-50,300)
                 if timer.time() >= timeout_s:
                     motors.stop_tank()
                     return ["axis correction **Suave**", 'right', 'failed']
@@ -53,12 +53,12 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         elif se.reflection() < set_point_s : 
             timer.reset()
             while se.reflection() < set_point_s:
-                motors.start_tank(-50,-150)
+                motors.start_tank(300,-50)
                 if timer.time() >= timeout_s:
                     motors.stop_tank()
                     return ["axis correction **Suave**",'left','failed']
             move_side = 'left'
-        if corner == 5:
+        if corner >= 5:
             corner == 0
         name = "axis correction **Suave**"
         log = 'succeded'
@@ -66,7 +66,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         if sd.reflection() > se.reflection():
             timer.reset()
             while sd.reflection() > set_point_c:
-                motors.start_tank(300,-50)
+                motors.start_tank(200,0)
                 move_side = 'right'
                 if timer.time() >= timeout_c:
                     corner += 1
@@ -75,7 +75,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         else:
             timer.reset()
             while se.reflection() > set_point_c:
-                motors.start_tank(-50,300)
+                motors.start_tank(0,200)
                 move_side = 'left'
                 if timer.time() >= timeout_c:
                     corner += 1
@@ -93,7 +93,7 @@ def proportionalAlign(se, sd, kP,set_point):
     errorE = se.reflection() - set_point
     errorD = sd.reflection() - set_point
     leftMotorSpd = 50 + errorE * kP * 4.7 * 0.8
-    rightMotorSpd = 50 + errorD * kP * 4.7 * 0.8
+    rightMotorSpd = 50 + errorD * kP * 4 * 0.8
     motors.start_tank(leftMotorSpd,rightMotorSpd)
     diff_l_r = leftMotorSpd - rightMotorSpd
     if diff_l_r > 0:
@@ -127,7 +127,7 @@ def recoveryTask(set_point):
         if isMoveSide == "left": #if last task side was right, then:
             timer.reset()
             while se.reflection() > set_point:
-                motors.start_tank(-300,300)
+                motors.start_tank(-200,200)
                 if timer.time() >= timeout:
                     motors.stop_tank()
                     time_recovery += 1
@@ -139,7 +139,7 @@ def recoveryTask(set_point):
         elif isMoveSide == "right": #if last task side was left, then:
             timer.reset()
             while sd.reflection() > set_point:
-                motors.start_tank(300,-300)
+                motors.start_tank(200,-200)
                 if timer.time() >= timeout*2:
                     motors.stop_tank()
                     time_recovery += 1
@@ -154,9 +154,9 @@ def recoveryTask(set_point):
         motors.move_tank(2000,-200,-200)
     if ltName == "intersectionSolver": #if last task was intersection solver, then:
         if ltMoveSide == "right": #if last task side was right, then:
-            motors.move_tank(1000,200,-200)
+            motors.move_tank(1000,300,-300)
         if ltMoveSide == "left": #if last task side was left, then:
-            motors.move_tank(1000,-200,200)
+            motors.move_tank(1000,-300,300)
     if ltName == "proportional align": #if last task was proportional align, then:
         print(ltName)
     return [name, move_side, log]
@@ -225,7 +225,7 @@ def resgate():
     robot.pointTo(PontoInicial[2])
     robot.motors.move_tank(3000,250,250)
     robot.back_goTo(45,35)
-    Claw.pickup()
+    # Claw.pickup()
     wait(2000)
     robot.back_goTo(Center[0],Center[1])
     safe = FindSafe(AreaResgate)
@@ -235,7 +235,7 @@ def resgate():
     else:
         robot.back_goTo(safe[0], safe[1])
         wait(1000)
-        Claw.release()
+        # Claw.release()
         wait(1000)
         robot.goTo(Center[0],Center[1])
         robot.goTo(45,75)
@@ -273,7 +273,7 @@ def checarResgate(u_value):
 darkest = ""
 
 # defining motors
-motors = MotorPair(Port.D,Port.A)
+motors = MotorPair(Port.A,Port.D)
 
 # defining sensors
 green_values = [[[0, 24.1, 17.4], [8.7, 34.1, 27.4]], [[0, 27.5, 18.3], [8.8, 37.5, 28.3]]]
@@ -301,8 +301,8 @@ AreaResgate = [[20,20],[20,70],[70,20],[70,70]]
 out = [75,85,90]
 safe = None
 robot = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
-set_point_c = 20
-set_point_s = 25
+set_point_c = 10
+set_point_s = 45
 timeout_s = 1200
 timeout_c = 1350
 max_corner = 3
@@ -316,7 +316,7 @@ safe = None
 
 
 time_recovery = 1
-claw = Claw(Port.B, Port.C)
+# claw = Claw(Port.B, Port.C)
 
 #main loop
 if __name__ == "__main__":
@@ -365,17 +365,17 @@ if __name__ == "__main__":
                             sc_value = sc.reflection() #update the middle sensor value
                             sensor_values = str(se_value) + ',' + str(sc_value) + ',' + str(sd_value) #sets a variable to show the updated sensor values
                             print(sensor_values) #debug for showing the values of the sensor every second
-                            if se.reflection() > 50 and sd.reflection() > 50 and sc.reflection() < 55: #if the robot is in line, then:
+                            if se.reflection() > 30 and sd.reflection() > 30 and sc.reflection() < 30: #if the robot is in line, then:
                                 updateLog(proportionalAlign(se,sd,kP,set_point_p)) #do proportional align 
                             else: #if the robot isn't in line, then:
                                 print('back until see black') #debug
                                 motors.move_tank(1000, -200, -200) #go back until see black
-                                if se.reflection() > 60 and sd.reflection() > 60 and sc.reflection() > 60:
+                                if se.reflection() > 25 and sd.reflection() > 25 and sc.reflection() > 30:
                                     motors.move_tank(1000, -200, -200)
                                 corner = 0
                                 updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) # do axis correction after it returns
                         else: #else, if both left-right are seeing a value higher then 30, then:
-                            if se_value > 50 and sd_value > 50:
+                            if se_value > 25 and sd_value > 25:
                                 print('axis correction no branco') #debug
                                 updateLog(["Axis Correction no branco",move_side,log])
                             updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) #do axis correction
