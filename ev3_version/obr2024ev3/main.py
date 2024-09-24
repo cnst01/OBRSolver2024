@@ -32,6 +32,7 @@ def updateLog(log):
 def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, max_corner):
     timer = StopWatch()
     #axisCorrectionDisplay()
+    global max_suave
     global corner
     global logs 
     name = ''
@@ -50,6 +51,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
                     motors.stop_tank()
                     return ["axis correction **Suave**", 'right', 'failed']
             move_side = 'right'
+            motors.stop_tank()
         elif se.reflection() < set_point_s : 
             timer.reset()
             while se.reflection() < set_point_s:
@@ -58,7 +60,8 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
                     motors.stop_tank()
                     return ["axis correction **Suave**",'left','failed']
             move_side = 'left'
-        if corner == 5:
+            motors.stop_tank()
+        if corner == max_corner + max_suave:
             corner == 0
         name = "axis correction **Suave**"
         log = 'succeded'
@@ -94,8 +97,8 @@ def proportionalAlign(se, sd, kP,set_point):
     log='failed'
     errorE = se.reflection() - set_point
     errorD = sd.reflection() - set_point
-    leftMotorSpd = 50 + (errorD * kP)
-    rightMotorSpd = 50 + (errorE * kP)
+    leftMotorSpd = 10 + (errorD * kP)
+    rightMotorSpd = 10 + (errorE * kP)
     motors.start_tank(leftMotorSpd,rightMotorSpd)
     diff_l_r = leftMotorSpd - rightMotorSpd
     if diff_l_r > 0:
@@ -142,7 +145,7 @@ def recoveryTask(set_point):
             timer.reset()
             while sd.reflection() > set_point:
                 motors.start_tank(300,-300)
-                if timer.time() >= timeout*2:
+                if timer.time() >= timeout:
                     motors.stop_tank()
                     time_recovery += 1
                     return [name,"right","failed"]
@@ -299,10 +302,11 @@ out = [75,85,90]
 safe = None
 robot = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
 set_point_c = 40
-set_point_s = 45
+set_point_s = 35
 timeout_s = 1200
 timeout_c = 1500
 max_corner = 3
+max_suave = 2
 kP = 4
 set_point_i1 = 20
 set_point_i2 = 20
