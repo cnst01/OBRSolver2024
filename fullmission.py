@@ -378,20 +378,22 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         if sd.reflection() < set_point_s:
             timer.reset()
             while sd.reflection() < set_point_s:
-                motors.start_tank(-100,50)
+                motors.start_tank(-150,20)
                 if timer.time() >= timeout_s:
                     motors.stop_tank()
                     return ["axis correction **Suave**", 'right', 'failed']
+            motors.stop_tank()
             move_side = 'right'
         elif se.reflection() < set_point_s : 
             timer.reset()
             while se.reflection() < set_point_s:
-                motors.start_tank(50,-100)
+                motors.start_tank(20,-150)
                 if timer.time() >= timeout_s:
                     motors.stop_tank()
                     return ["axis correction **Suave**",'left','failed']
+            motors.stop_tank()
             move_side = 'left'
-        if corner == 5:
+        if corner == 6:
             corner == 0
         name = "axis correction **Suave**"
         log = 'succeded'
@@ -757,7 +759,7 @@ darkest = ""
 motors = MotorPair(Port.A,Port.B)
 
 # defining sensors
-green_values = [[[146.325, 69.305, 27.32], [186.325, 109.305, 67.32]], [[149.665, 43.74, 76.96], [189.665, 83.74001, 116.96]]]
+green_values = [[[144.18, 59.945, 52.26], [184.18, 99.945, 92.26]], [[146.77, 56.265, 53.105], [186.77, 96.265, 93.105]]]
 u2 = UltrasonicSensor(Port.E)
 sc = ColorSensor(Port.D)
 sd = ColorSensor(Port.C)
@@ -781,7 +783,7 @@ AreaResgate = [[20,20],[20,70],[70,20],[70,70]]
 out = [75,45,90]
 safe = None
 set_point_c = 28
-set_point_s = 65
+set_point_s = 60
 timeout_s = 800
 timeout_c = 900
 max_corner = 3
