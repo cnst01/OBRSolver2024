@@ -427,8 +427,8 @@ def proportionalAlign(se, sd, kP,set_point):
     errorE = se.reflection() - set_point
     errorD = sd.reflection() - set_point
     diff = errorE - errorD
-    leftMotorSpd = 50 + (errorD + diff)*kP
-    rightMotorSpd = 50 + (errorE - diff)*kP
+    leftMotorSpd = 100 + (errorD + diff)*kP
+    rightMotorSpd = 100 + (errorE - diff)*kP
     motors.start_tank(leftMotorSpd,rightMotorSpd)
     diff_l_r = leftMotorSpd - rightMotorSpd
     if diff_l_r > 0:
@@ -757,7 +757,7 @@ darkest = ""
 motors = MotorPair(Port.A,Port.B)
 
 # defining sensors
-green_values = [[[144.18, 59.945, 52.26], [184.18, 99.945, 92.26]], [[146.77, 56.265, 53.105], [186.77, 96.265, 93.105]]]
+green_values = [[[146.325, 69.305, 27.32], [186.325, 109.305, 67.32]], [[149.665, 43.74, 76.96], [189.665, 83.74001, 116.96]]]
 u2 = UltrasonicSensor(Port.E)
 sc = ColorSensor(Port.D)
 sd = ColorSensor(Port.C)
@@ -830,7 +830,7 @@ if __name__ == "__main__":
                 se_value = se.reflection() #constantly get the left sensor value
                 sd_value = sd.reflection() #constantly get the right sensor value 
                 sc_value = sc.reflection() #constantly get the middle sensor value
-                if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 45: #if right-left sensors values are bigger then 50(if they are seeing white), and middle value is smaller then 55(if its seeing black), then(if the robot is in line):
+                if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 56: #if right-left sensors values are bigger then 50(if they are seeing white), and middle value is smaller then 55(if its seeing black), then(if the robot is in line):
                     updateLog(proportionalAlign(se, sd, kP,set_point_p)) #do proportional align to correct little route errors
                 else: #else(if the robot isn't in line), then:
                     valores_verdes = i.checkGreen(green_values) #constantly use the checkGreen function from the Intersection object to return if any of the right-left sensors are seeig green
@@ -851,7 +851,7 @@ if __name__ == "__main__":
                             sc_value = sc.reflection() #update the middle sensor value
                             sensor_values = str(se_value) + ',' + str(sc_value) + ',' + str(sd_value) #sets a variable to show the updated sensor values
                             print(sensor_values) #debug for showing the values of the sensor every second
-                            if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 45: #if the robot is in line, then:
+                            if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 56: #if the robot is in line, then:
                                 updateLog(proportionalAlign(se,sd,kP,set_point_p)) #do proportional align 
                             else: #if the robot isn't in line, then:
                                 print('back until see black') #debug
