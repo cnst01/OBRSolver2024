@@ -5,7 +5,7 @@ from pybricks.robotics import DriveBase
 from pybricks.tools import wait, StopWatch
 import umath as math
 
-hub = PrimeHub(broadcast_channel=1)
+hub = PrimeHub(broadcast_channel=1)   
 display = hub.display#defining the display object
 yaw = hub.imu#defining the angle object of the hub
 
@@ -759,7 +759,8 @@ darkest = ""
 motors = MotorPair(Port.A,Port.B)
 
 # defining sensors
-green_values = [[[144.18, 59.945, 52.26], [184.18, 99.945, 92.26]], [[146.77, 56.265, 53.105], [186.77, 96.265, 93.105]]]
+green_values = [[[144.18, 40, 24], [190, 100, 92.26]], [[146.77, 40, 24], [190, 100, 93.105]]]
+u2 = UltrasonicSensor(Port.E)
 u2 = UltrasonicSensor(Port.E)
 sc = ColorSensor(Port.D)
 sd = ColorSensor(Port.C)
@@ -792,7 +793,7 @@ set_point_i1 = 50
 set_point_i2 = 80
 set_point_r = 40
 set_point_p = 77
-set_point_gap = 65
+set_point_gap = 75
 safe = None
 robo = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
 
