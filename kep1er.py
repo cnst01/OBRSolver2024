@@ -327,7 +327,7 @@ def resgate():
     real_angle = robo.hub.imu.heading()
     robo.position[2] = real_angle
     robo.pointTo(PontoInicial[2])
-    robo.motors.move_tank(3000,250,250)
+    robo.motors.move_tank(2000,250,250)
     robo.back_goTo(45,35)
     hub.ble.broadcast(0) #claw pickup
     wait(1000)
@@ -346,6 +346,7 @@ def resgate():
         hub.ble.broadcast(2) #claw reset
         wait(2000)
         robo.goTo(Center[0],Center[1])
+        robo.goTo(out2[0], out2[1])
         robo.goTo(out[0], out[1])
         robo.pointTo(out[2])
         robo.motors.move_tank(1000,250,250)
@@ -398,7 +399,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         if sd.reflection() > se.reflection():
             timer.reset()
             while sd.reflection() > set_point_c:
-                motors.start_tank(275,0  )
+                motors.start_tank(275,-25)
                 move_side = 'right'
                 if timer.time() >= timeout_c:
                     corner += 1
@@ -407,7 +408,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
         else:
             timer.reset()
             while se.reflection() > set_point_c:
-                motors.start_tank(0,275)
+                motors.start_tank(-25,275)
                 move_side = 'left'
                 if timer.time() >= timeout_c:
                     corner += 1
@@ -486,7 +487,6 @@ class Intersection:
                 print('direitinha')
                 motors.stop_tank()
                 motors.start_tank(0,300)
-                wait(1000)
                 while se.reflection() > set_point_2 and sd.reflection() > set_point_2 :
                     motors.start_tank(0,300)
                 motors.stop_tank()
@@ -643,7 +643,7 @@ def recoveryTask(set_point):
                 motors.start_tank(-300,350)
                 if timer.time() >= timeout:
                     motors.stop_tank()
-                    time_recovery += 1
+                    time_recovery += 0.9
                     return [name, "left", "failed"]
             move_side = "left"
             log = "succeded"
@@ -664,7 +664,7 @@ def recoveryTask(set_point):
         else:
             motors.move_tank(500,-200,-200)
     if ltName == "gap":
-        motors.move_tank(2000,-200,-200)
+        motors.move_tank(1600,-200,-200)
     if ltName == "intersectionSolver": #if last task was intersection solver, then:
         if ltMoveSide == "right": #if last task side was right, then:
             motors.move_tank(1000,200,-200)
@@ -764,10 +764,11 @@ mode = ""
 
 #defining values 
 green_values = [[[144.18, 40, 24], [190, 100, 92.26]], [[146.77, 40, 24], [190, 100, 93.105]]]
-PontoInicial = [45,10,0]
+PontoInicial = [20,10,0]
 Center = [45,45]
-AreaResgate = [[20,20],[20,70],[70,20],[70,70]]
-out = [75,45,90]
+AreaResgate = [[20,10],[20,70],[70,20],[70,70]]
+out = [75,80,90]
+out2 = [45,70]
 safe = None
 set_point_c = 28
 set_point_s = 60
@@ -831,7 +832,7 @@ if __name__ == "__main__":
                         updateLog(i.intersectionSolver(valores_verdes,set_point_i1,set_point_i2))# do intersection solver
                     if se.reflection() > set_point_gap and sd.reflection() > set_point_gap and sc.reflection() > set_point_gap: #if every sensor is seeing white, then:
                         if logs[-1][0] == 'proportional align': #if the last task was proportional align(if the robot were in line before seeing all white), then:
-                            motors.move_tank(1800,200,200)
+                            motors.move_tank(1400,200,200)
                             updateLog(["gap", 'None', "succeded"]) #it's a gap(uptade the log to a gap case)
                         else: #if the last task wasn't proportional align(something is wrong), then:
                             updateLog(recoveryTask(set_point_r)) #shit, lets try recovery task
