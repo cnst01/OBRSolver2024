@@ -9,13 +9,19 @@ from modules.motorpair import MotorPair
 from modules.finishline import FinishLine
 from modules.robot import Robot
 #creating intersection object
+
+ev3 = EV3Brick()
+
 class Intersection:
     def __init__(self, se, sd, green_values):
         self.se = se
         self.sd = sd
+        self.green_values = [[[0, 24.1, 17.4], [8.7, 34.1, 27.4]], [[0, 27.5, 18.3], [8.8, 37.5, 28.3]]]
     def intersectionSolver(self, valores, set_point_1, set_point_2):
         se = self.se
         sd = self.sd
+
+        motors = MotorPair(Port.D,Port.A)
         last_values = valores
         name = 'intersectionSolver'
         move_side = ''
@@ -26,7 +32,7 @@ class Intersection:
             motors.start_tank(100,100)
             wait(200)
             last_values = valores
-            valores = self.checkGreen(green_values)
+            valores = self.checkGreen(self.green_values)
         valores = last_values
         motors.stop_tank()
         if valores[0] == True and valores[1] == True:

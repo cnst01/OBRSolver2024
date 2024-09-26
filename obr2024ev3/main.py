@@ -10,6 +10,7 @@ from modules.motorpair import MotorPair
 from modules.intersection import Intersection
 from modules.finishline import FinishLine
 from modules.robot import Robot
+from modules.claw import Claw
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
@@ -227,40 +228,49 @@ def FindSafe(areas):
     return False
 
 def resgate():
-    robot.pointTo(PontoInicial[2])
-    robot.motors.move_tank(3000,250,250)
-    robot.back_goTo(45,35)
-    robot.back_goTo(Center[0],Center[1])
-    safe = FindSafe(AreaResgate)
-    if not safe:
-        robot.goTo(out[0], out[1])
-        robot.pointTo(out[2])
-    else:
-        robot.back_goTo(safe[0], safe[1])
-        robot.goTo(Center[0],Center[1])
-        robot.goTo(45,75)
-        robot.goTo(out[0], out[1])
-        robot.pointTo(out[2])
-        robot.motors.move_tank(1000,250,250)
+    robot.motors.move_tank(2000,400,500)
+    # robot.goTo(45,30)
+    # robot.back_goTo(45,35)
+    # claw.pickUp()
+    # wait(2000)
+    # robot.back_goTo(Center[0],Center[1])
+    # safe = FindSafe(AreaResgate)
+    # if not safe:
+    #     robot.goTo(out[0], out[1])
+    #     robot.pointTo(out[2])
+    # else:
+    #     robot.back_goTo(safe[0], safe[1])
+    #     wait(1000)
+    #     claw.release()
+    #     wait(1000)
+    robot.goTo(Center[0],Center[1])
+    robot.goTo(45,75)
+    robot.goTo(out[0], out[1])
+    robot.pointTo(out[2])
+    robot.motors.move_tank(1000,250,250)
     print(robot.map.points)
 
 #creating a function to detect if the robot is in the rescue zone
 def checarResgate(u_value):
+    global bypass
+    if bypass:
+        return False
     r = False
-    if u_value > 300 and u_value < 500:
+    if u_value > 600 and u_value < 780:
         motors.move_tank(500,-250,250)
-        if u2.distance() < 500 and u2.distance() > 300:
+        if u2.distance() < 1000:
             motors.move_tank(700,250,-250)
             r = True
         else:
             motors.move_tank(1000,250,-250)
-            if u2.distance() < 500:
+            if u2.distance() < 1000:
                 r = True
             motors.move_tank(500,-250,250)
         if r:
             motors.stop_tank()
             ev3.speaker.beep(20)
-            # resgate()    
+            bypass = True
+            resgate()    
             return True
     elif u_value < 100:
         ev3.speaker.beep(100)
@@ -295,9 +305,9 @@ corner = 0
 mode = "execution"
 
 #Saídas = [[385,0],[1155,0],[1925,0],[385,2310][1155,2310],[1925,2310],[0,385],[0,1155],[0,1925],[2310,385],[2310,1155],[2310,1925]]
-PontoInicial = [45,10,0]
+PontoInicial = [20,10,0]
 Center = [45,45]
-AreaResgate = [[20,20],[20,70],[70,20],[70,70]]
+AreaResgate = [[20,10],[20,70],[70,20],[70,70]]
 out = [75,85,90]
 safe = None
 robot = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
@@ -308,14 +318,14 @@ timeout_c = 1500
 max_corner = 3
 max_suave = 2
 kP = 4
-set_point_i1 = 20
-set_point_i2 = 20
+set_point_i1 = 40
+set_point_i2 = 40
 set_point_r = 20
 set_point_p = 15
 set_point_gap = 50
 safe = None
-
-
+claw = Claw(Port.B, Port.C)
+bypass = False
 time_recovery = 1
 #main loop
 if __name__ == "__main__":
