@@ -419,6 +419,7 @@ def axis_correction(last_move, set_point_c , set_point_s, timeout_s, timeout_c, 
     return [name, move_side, log]
 
 def proportionalAlign(se, sd, kP,set_point):
+    robo.hub.imu.reset_heading(0)
     proportionalAlignDisplay()
     name ='proportional align'
     move_side = ''
