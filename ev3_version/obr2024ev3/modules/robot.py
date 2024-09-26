@@ -45,11 +45,11 @@ class Robot:
         # print(range(degrees - precision, degrees + precision))
         if(dir < degrees):
             diff = degrees - dir
-            self.motors.move_angle(diff*5,-200,200)
+            self.motors.move_angle(abs(diff*5),-100,100)
             self.motors.stop_tank()
         else:
             diff = dir - degrees
-            self.motors.move_angle(diff*5,200,-200)
+            self.motors.move_angle(abs(diff*5),100,-100)
             self.motors.stop_tank()
         print('turning ' + str(degrees) + ' degrees')
         self.position[2] = degrees
@@ -134,10 +134,13 @@ class Robot:
         dist = math.sqrt(x**2 + y**2)*25.66
         if x != 0 and y > 0:
             self.pointTo(int(math.degrees(math.atan(x/y))))
+            print("done")
         elif x > 0 and y < 0:
             self.pointTo(90 + int(abs(math.degrees(math.atan(y/x)))))
+            print("done")
         elif x < 0 and y < 0:
             self.pointTo(-90 - int(abs(math.degrees(math.atan(y/x)))))
+            print("done")
         elif x == 0 and y != 0:
             self.moveY(y)
             return 1
