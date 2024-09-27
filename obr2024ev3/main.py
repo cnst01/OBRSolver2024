@@ -10,7 +10,6 @@ from modules.motorpair import MotorPair
 from modules.intersection import Intersection
 from modules.finishline import FinishLine
 from modules.robot import Robot
-from modules.claw import Claw
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
@@ -228,11 +227,9 @@ def FindSafe(areas):
     return False
 
 def resgate():
-    robot.motors.move_tank(1500,500,500)
-    robot.goTo(45,25)
-    robot.back_goTo(45,30)
-    claw.pickUp()
-    wait(2000)
+    robot.pointTo(PontoInicial[2])
+    robot.motors.move_tank(3000,250,250)
+    robot.back_goTo(45,35)
     robot.back_goTo(Center[0],Center[1])
     safe = FindSafe(AreaResgate)
     if not safe:
@@ -240,11 +237,8 @@ def resgate():
         robot.pointTo(out[2])
     else:
         robot.back_goTo(safe[0], safe[1])
-        wait(1000)
-        claw.release()
-        wait(1000)
         robot.goTo(Center[0],Center[1])
-        robot.goTo(75,75)
+        robot.goTo(45,75)
         robot.goTo(out[0], out[1])
         robot.pointTo(out[2])
         robot.motors.move_tank(1000,250,250)
@@ -283,10 +277,10 @@ def checarResgate(u_value):
 darkest = ""
 
 # defining motors
-motors = MotorPair(Port.D,Port.B)
+motors = MotorPair(Port.D,Port.A)
 
 # defining sensors
-green_values = [[[0, 24.1, 17.4], [8.7, 34.1, 27.4]], [[0, 27.5, 18.3], [8.8, 37.5, 28.3]]]
+green_values = [[[0, 27.02, 17.18], [9.2, 37.02, 27.18]], [[0.15, 30.045, 19.74], [10.15, 40.045, 29.74]]]
 u2 = UltrasonicSensor(Port.S4)
 sc = ColorSensor(Port.S3)
 sd = ColorSensor(Port.S2)
@@ -303,11 +297,11 @@ corner = 0
 
 #creating the mode variable to use it later to choose the robot mode between calibrate mode and execution mode 
 mode = "execution"
-
+bypass = False
 #Saídas = [[385,0],[1155,0],[1925,0],[385,2310][1155,2310],[1925,2310],[0,385],[0,1155],[0,1925],[2310,385],[2310,1155],[2310,1925]]
-PontoInicial = [20,10,0]
+PontoInicial = [45,10,0]
 Center = [45,45]
-AreaResgate = [[20,10],[20,70],[70,20],[70,70]]
+AreaResgate = [[20,20],[20,70],[70,20],[70,70]]
 out = [75,85,90]
 safe = None
 robot = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
@@ -318,16 +312,14 @@ timeout_c = 1500
 max_corner = 3
 max_suave = 2
 kP = 4
-set_point_i1 = 40
-set_point_i2 = 40
-set_point_r = 20
+set_point_i1 = 20
+set_point_i2 = 20
+set_point_r = 15
 set_point_p = 15
 set_point_gap = 50
-safe = None
-claw = Claw(Port.A, Port.C)
-bypass = False
-time_recovery = 1
 
+
+time_recovery = 1
 #main loop
 if __name__ == "__main__":
     while True:
@@ -386,7 +378,7 @@ if __name__ == "__main__":
                                 corner = 0
                                 updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) # do axis correction after it returns
                         else: #else, if both left-right are seeing a value higher then 30, then:
-                            if se_value > 30 and sd_value > 30:
+                            if se_value > 40 and sd_value > 40:
                                 print('axis correction no branco') #debug
                                 updateLog(["Axis Correction no branco",move_side,log])
                             updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) #do axis correction
