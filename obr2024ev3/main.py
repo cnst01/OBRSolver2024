@@ -228,26 +228,26 @@ def FindSafe(areas):
     return False
 
 def resgate():
-    robot.motors.move_tank(2000,400,500)
-    # robot.goTo(45,30)
-    # robot.back_goTo(45,35)
-    # claw.pickUp()
-    # wait(2000)
-    # robot.back_goTo(Center[0],Center[1])
-    # safe = FindSafe(AreaResgate)
-    # if not safe:
-    #     robot.goTo(out[0], out[1])
-    #     robot.pointTo(out[2])
-    # else:
-    #     robot.back_goTo(safe[0], safe[1])
-    #     wait(1000)
-    #     claw.release()
-    #     wait(1000)
-    robot.goTo(Center[0],Center[1])
-    robot.goTo(45,75)
-    robot.goTo(out[0], out[1])
-    robot.pointTo(out[2])
-    robot.motors.move_tank(1000,250,250)
+    robot.motors.move_tank(1500,500,500)
+    robot.goTo(45,25)
+    robot.back_goTo(45,30)
+    claw.pickUp()
+    wait(2000)
+    robot.back_goTo(Center[0],Center[1])
+    safe = FindSafe(AreaResgate)
+    if not safe:
+        robot.goTo(out[0], out[1])
+        robot.pointTo(out[2])
+    else:
+        robot.back_goTo(safe[0], safe[1])
+        wait(1000)
+        claw.release()
+        wait(1000)
+        robot.goTo(Center[0],Center[1])
+        robot.goTo(75,75)
+        robot.goTo(out[0], out[1])
+        robot.pointTo(out[2])
+        robot.motors.move_tank(1000,250,250)
     print(robot.map.points)
 
 #creating a function to detect if the robot is in the rescue zone
@@ -256,7 +256,7 @@ def checarResgate(u_value):
     if bypass:
         return False
     r = False
-    if u_value > 600 and u_value < 780:
+    if u_value > 600 and u_value < 740:
         motors.move_tank(500,-250,250)
         if u2.distance() < 1000:
             motors.move_tank(700,250,-250)
@@ -283,7 +283,7 @@ def checarResgate(u_value):
 darkest = ""
 
 # defining motors
-motors = MotorPair(Port.D,Port.A)
+motors = MotorPair(Port.D,Port.B)
 
 # defining sensors
 green_values = [[[0, 24.1, 17.4], [8.7, 34.1, 27.4]], [[0, 27.5, 18.3], [8.8, 37.5, 28.3]]]
@@ -324,9 +324,10 @@ set_point_r = 20
 set_point_p = 15
 set_point_gap = 50
 safe = None
-claw = Claw(Port.B, Port.C)
+claw = Claw(Port.A, Port.C)
 bypass = False
 time_recovery = 1
+
 #main loop
 if __name__ == "__main__":
     while True:
