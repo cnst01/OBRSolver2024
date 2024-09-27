@@ -478,7 +478,7 @@ class Intersection:
                 motors.stop_tank()
                 wait(1000)
                 motors.start_tank(300,0)
-                wait(1000)
+                wait(1500)
                 motors.stop_tank()
                 move_side = 'left'
             else:
@@ -487,11 +487,10 @@ class Intersection:
                     return [name,'','Failed']
                 print('direitinha')
                 motors.stop_tank()
-                motors.start_tank(0,300)
-                while se.reflection() > set_point_2 and sd.reflection() > set_point_2 :
-                    motors.start_tank(0,300)
-                motors.stop_tank()
                 wait(1000)
+                motors.start_tank(0,300)
+                wait(1500)
+                motors.stop_tank()
                 move_side = 'right'
         name = 'intersectionSolver'
         log = 'succeded'
