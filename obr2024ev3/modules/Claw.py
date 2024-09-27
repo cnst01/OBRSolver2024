@@ -19,13 +19,13 @@ class Claw:
         self.arm.run(speed)
         wait(2000)
         self.arm.stop()
-        print("up")
-    def slowdown(self, speed = 250):
+        print("down")
+    def slowdown(self, speed = -250):
         self.arm.run(speed)
-        wait(1000)
+        wait(2000)
         self.arm.stop()
         print("slowdown")
-    def open(self, speed = 250):
+    def open(self, speed = -250):
         self.hand.run(speed)
         wait(1000)
         self.hand.stop()
