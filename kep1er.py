@@ -328,7 +328,8 @@ def resgate():
     robo.position[2] = real_angle
     robo.pointTo(PontoInicial[2])
     robo.motors.move_tank(2000,250,250)
-    robo.back_goTo(45,35)
+    robo.goTo(30,40)
+    robo.back_goTo(60,55)
     hub.ble.broadcast(0) #claw pickup
     wait(1000)
     hub.ble.broadcast(2) #claw reset
@@ -336,6 +337,8 @@ def resgate():
     robo.back_goTo(Center[0],Center[1])
     safe = FindSafe(AreaResgate)
     if not safe:
+        robo.goTo(Center[0],Center[1])
+        robo.goTo(out2[0], out2[1])
         robo.goTo(out[0], out[1])
         robo.pointTo(out[2])
     else:
@@ -349,7 +352,7 @@ def resgate():
         robo.goTo(out2[0], out2[1])
         robo.goTo(out[0], out[1])
         robo.pointTo(out[2])
-        robo.motors.move_tank(1000,250,250)
+        robo.motors.move_tank(1250,250,250)
     print(robo.map.points)
 
 def updateLog(log):
@@ -640,7 +643,7 @@ def recoveryTask(set_point):
         if isMoveSide == "left": #if last task side was right, then:
             timer.reset()
             while se.reflection() > set_point:
-                motors.start_tank(-300,350)
+                motors.start_tank(-300,325)
                 if timer.time() >= timeout:
                     motors.stop_tank()
                     time_recovery += 0.9
@@ -652,7 +655,7 @@ def recoveryTask(set_point):
         elif isMoveSide == "right": #if last task side was left, then:
             timer.reset()
             while sd.reflection() > set_point:
-                motors.start_tank(350,-300)
+                motors.start_tank(325,-300)
                 if timer.time() >= timeout:
                     motors.stop_tank()
                     time_recovery += 1
@@ -664,7 +667,7 @@ def recoveryTask(set_point):
         else:
             motors.move_tank(500,-200,-200)
     if ltName == "gap":
-        motors.move_tank(1600,-200,-200)
+        motors.move_tank(1800,-200,-200)
     if ltName == "intersectionSolver": #if last task was intersection solver, then:
         if ltMoveSide == "right": #if last task side was right, then:
             motors.move_tank(1000,200,-200)
@@ -719,6 +722,7 @@ def desviarObs(lado = 'left'):
     return [name, lado, 'failed']       
 
 def checarResgate(u_value):
+    return True
     r = False
     if u_value > 700 and u_value < 930:
         motors.move_tank(500,-250,250)
@@ -736,10 +740,11 @@ def checarResgate(u_value):
             resgate()    
             return True
     elif u_value < 100:
-        hub.speaker.beep()
-        motors.stop_tank()
-        move_side = 'right'
-        desviarObs()
+        # hub.speaker.beep()
+        # motors.stop_tank()
+        # move_side = 'right'
+        # desviarObs()
+        print("obs")
     return False
 
 # defining motors
@@ -763,12 +768,12 @@ corner = 0
 mode = ""
 
 #defining values 
-green_values = [[[144.18, 40, 24], [190, 100, 92.26]], [[146.77, 40, 24], [190, 100, 93.105]]]
-PontoInicial = [20,10,0]
-Center = [45,45]
-AreaResgate = [[20,10],[20,70],[70,20],[70,70]]
-out = [75,80,90]
-out2 = [45,70]
+green_values = [[[144.18, 40, 30], [190, 100, 92.26]], [[146.77, 40, 30], [190, 100, 93.105]]]
+PontoInicial = [20,30,0]
+Center = [60,65]
+AreaResgate = [[20,30],[20,100],[105,30],[115,80]]
+out = [115,100,0]
+out2 = [110,65]
 safe = None
 set_point_c = 28
 set_point_s = 60
@@ -778,7 +783,7 @@ max_corner = 3
 kP = 4
 set_point_i1 = 50 
 set_point_i2 = 80
-set_point_r = 40
+set_point_r = 10
 set_point_p = 77
 set_point_gap = 75
 
@@ -824,7 +829,7 @@ if __name__ == "__main__":
                 se_value = se.reflection() #constantly get the left sensor value
                 sd_value = sd.reflection() #constantly get the right sensor value 
                 sc_value = sc.reflection() #constantly get the middle sensor value
-                if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 60: #if right-left sensors values are bigger then 50(if they are seeing white), and middle value is smaller then 55(if its seeing black), then(if the robot is in line):
+                if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 66: #if right-left sensors values are bigger then 50(if they are seeing white), and middle value is smaller then 55(if its seeing black), then(if the robot is in line):
                     updateLog(proportionalAlign(se, sd, kP,set_point_p)) #do proportional align to correct little route errors
                 else: #else(if the robot isn't in line), then:
                     valores_verdes = i.checkGreen(green_values) #constantly use the checkGreen function from the Intersection object to return if any of the right-left sensors are seeig green
@@ -832,7 +837,7 @@ if __name__ == "__main__":
                         updateLog(i.intersectionSolver(valores_verdes,set_point_i1,set_point_i2))# do intersection solver
                     if se.reflection() > set_point_gap and sd.reflection() > set_point_gap and sc.reflection() > set_point_gap: #if every sensor is seeing white, then:
                         if logs[-1][0] == 'proportional align': #if the last task was proportional align(if the robot were in line before seeing all white), then:
-                            motors.move_tank(1400,200,200)
+                            motors.move_tank(1600,200,200)
                             updateLog(["gap", 'None', "succeded"]) #it's a gap(uptade the log to a gap case)
                         else: #if the last task wasn't proportional align(something is wrong), then:
                             updateLog(recoveryTask(set_point_r)) #shit, lets try recovery task
@@ -845,7 +850,7 @@ if __name__ == "__main__":
                             sc_value = sc.reflection() #update the middle sensor value
                             sensor_values = str(se_value) + ',' + str(sc_value) + ',' + str(sd_value) #sets a variable to show the updated sensor values
                             print(sensor_values) #debug for showing the values of the sensor every second
-                            if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 60: #if the robot is in line, then:
+                            if se.reflection() > 45 and sd.reflection() > 45 and sc.reflection() < 66: #if the robot is in line, then:
                                 updateLog(proportionalAlign(se,sd,kP,set_point_p)) #do proportional align 
                             else: #if the robot isn't in line, then:
                                 print('back until see black') #debug
