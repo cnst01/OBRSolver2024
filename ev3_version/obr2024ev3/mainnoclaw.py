@@ -250,7 +250,7 @@ def checarResgate(u_value):
     if bypass:
         return False
     r = False
-    if u_value > 600 and u_value < 780:
+    if u_value > 600 and u_value < 740:
         motors.move_tank(500,-250,250)
         if u2.distance() < 1000:
             motors.move_tank(700,250,-250)
@@ -297,7 +297,7 @@ corner = 0
 
 #creating the mode variable to use it later to choose the robot mode between calibrate mode and execution mode 
 mode = "execution"
-
+bypass = False
 #Saídas = [[385,0],[1155,0],[1925,0],[385,2310][1155,2310],[1925,2310],[0,385],[0,1155],[0,1925],[2310,385],[2310,1155],[2310,1925]]
 PontoInicial = [45,10,0]
 Center = [45,45]
@@ -314,7 +314,7 @@ max_suave = 2
 kP = 4
 set_point_i1 = 20
 set_point_i2 = 20
-set_point_r = 20
+set_point_r = 15
 set_point_p = 15
 set_point_gap = 50
 
@@ -378,7 +378,7 @@ if __name__ == "__main__":
                                 corner = 0
                                 updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) # do axis correction after it returns
                         else: #else, if both left-right are seeing a value higher then 30, then:
-                            if se_value > 30 and sd_value > 30:
+                            if se_value > 40 and sd_value > 40:
                                 print('axis correction no branco') #debug
                                 updateLog(["Axis Correction no branco",move_side,log])
                             updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) #do axis correction

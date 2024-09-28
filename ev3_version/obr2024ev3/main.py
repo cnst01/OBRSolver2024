@@ -10,7 +10,6 @@ from modules.motorpair import MotorPair
 from modules.intersection import Intersection
 from modules.finishline import FinishLine
 from modules.robot import Robot
-from modules.claw import Claw
 # This program requires LEGO EV3 MicroPython v2.0 or higher.
 # Click "Open user guide" on the EV3 extension tab for more information.
 
@@ -312,7 +311,7 @@ out = [75,85,90]
 safe = None
 robot = Robot(motors, None, [PontoInicial[0],PontoInicial[1], 0])
 set_point_c = 40
-set_point_s = 35
+set_point_s = 50
 timeout_s = 1200
 timeout_c = 1500
 max_corner = 3
