@@ -429,7 +429,7 @@ def proportionalAlign(se, sd, kP,set_point):
     log='failed'
     errorE = se.reflection() - set_point
     errorD = sd.reflection() - set_point
-    diff = errorD - errorE  
+    diff = errorE - errorD  
     leftMotorSpd = 150 + (errorD + diff)*kP
     rightMotorSpd = 150 + (errorE - diff)*kP
     motors.start_tank(leftMotorSpd,rightMotorSpd)
@@ -722,7 +722,6 @@ def desviarObs(lado = 'left'):
     return [name, lado, 'failed']       
 
 def checarResgate(u_value):
-    return True
     r = False
     if u_value > 700 and u_value < 930:
         motors.move_tank(500,-250,250)
@@ -748,14 +747,14 @@ def checarResgate(u_value):
     return False
 
 # defining motors
-motors = MotorPair(Port.A,Port.B)
+motors = MotorPair(Port.B,Port.A)
 
 # defining sensors
 u2 = UltrasonicSensor(Port.E)
 u2 = UltrasonicSensor(Port.E)
 sc = ColorSensor(Port.D)
-sd = ColorSensor(Port.C)
-se = ColorSensor(Port.F)
+sd = ColorSensor(Port.F)
+se = ColorSensor(Port.C)
 
 #creating the log list and the corner variable
 name = 'Beginning run'
@@ -810,7 +809,7 @@ if __name__ == "__main__":
             display.off()#turn off the display to show that the mode has restarted
             mode = ""#set the mode to blank after the calibrate is done
         if mode == "execution": #if the actual mode is execution, then:
-            executionDisplay() #set the display to show an "E"w
+            executionDisplay() #set the display to show an "E"
             u_value = u2.distance() # constantly get the distance value
             while checarResgate(u_value) == False: #while the robot isn't in rescue zone, then:
                 if red.checkRed():
@@ -864,3 +863,4 @@ if __name__ == "__main__":
                                 print('axis correction no branco') #debug
                                 updateLog(["Axis Correction no branco",move_side,log])
                             updateLog(axis_correction(logs[-1][0],set_point_c,set_point_s,timeout_s,timeout_c,max_corner)) #do axis correction
+            print("aaa")
