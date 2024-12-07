@@ -41,7 +41,6 @@ class Intersection:
     def __init__(self, se, sd, green_values):
         self.se = se
         self.sd = sd
-        self.green_values = green_values
     def intersectionSolver(self, valores):
         se = self.se
         sd = self.sd
@@ -56,7 +55,7 @@ class Intersection:
             motors.start_tank(100,100)
             wait(200)
             last_values = valores
-            valores = self.checkGreen(self.green_values)
+            valores = self.checkGreen(green_values)
         valores = last_values
         motors.stop_tank()
         if valores[0] == True and valores[1] == True:
